@@ -24,11 +24,12 @@ export const getPosts = asyncHandler(async (req: Request, res: Response) => {
 // Retrieves a single post by id.
 export const getPostByIdHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const id = (Array.isArray(req.params.id) ? req.params.id[0] : req.params.id) ?? "";
     const post = await getPostById(id);
 
     if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+      res.status(404).json({ message: "Post not found" });
+      return;
     }
 
     res.json(post);
@@ -44,13 +45,15 @@ export const createPostHandler = asyncHandler(
     };
 
     if (!category) {
-      return res.status(400).json({ message: "Category is required" });
+      res.status(400).json({ message: "Category is required" });
+      return;
     }
 
     const files = (req.files || []) as Express.Multer.File[];
 
     if (!files.length) {
-      return res.status(400).json({ message: "At least one image is required" });
+      res.status(400).json({ message: "At least one image is required" });
+      return;
     }
 
     const imageUrls = await uploadImagesToCloudinary(files);
@@ -68,7 +71,7 @@ export const createPostHandler = asyncHandler(
 // Updates an existing post and optionally replaces its images.
 export const updatePostHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const id = (Array.isArray(req.params.id) ? req.params.id[0] : req.params.id) ?? "";
     const { text, category } = req.body as {
       text?: string;
       category?: string;
@@ -88,7 +91,8 @@ export const updatePostHandler = asyncHandler(
     });
 
     if (!updated) {
-      return res.status(404).json({ message: "Post not found" });
+      res.status(404).json({ message: "Post not found" });
+      return;
     }
 
     res.json(updated);
@@ -98,12 +102,13 @@ export const updatePostHandler = asyncHandler(
 // Deletes a post by id.
 export const deletePostHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const id = (Array.isArray(req.params.id) ? req.params.id[0] : req.params.id) ?? "";
 
     const deleted = await deletePost(id);
 
     if (!deleted) {
-      return res.status(404).json({ message: "Post not found" });
+      res.status(404).json({ message: "Post not found" });
+      return;
     }
 
     res.status(204).send();

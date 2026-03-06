@@ -11,13 +11,15 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   };
 
   if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
+    res.status(400).json({ message: "Email and password are required" });
+    return;
   }
 
   const isValid = await validateAdminCredentials(email, password);
 
   if (!isValid) {
-    return res.status(401).json({ message: "Invalid credentials" });
+    res.status(401).json({ message: "Invalid credentials" });
+    return;
   }
 
   // For this simple setup we use the email as the admin identifier.

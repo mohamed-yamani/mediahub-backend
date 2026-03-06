@@ -21,7 +21,8 @@ export const createCategoryHandler = asyncHandler(
     const { name, icon } = req.body as { name?: string; icon?: string };
 
     if (!name) {
-      return res.status(400).json({ message: "Name is required" });
+      res.status(400).json({ message: "Name is required" });
+      return;
     }
 
     const category = await createCategory({ name, icon });
@@ -32,13 +33,14 @@ export const createCategoryHandler = asyncHandler(
 // Updates an existing category by id.
 export const updateCategoryHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const id = (Array.isArray(req.params.id) ? req.params.id[0] : req.params.id) ?? "";
     const { name, icon } = req.body as { name?: string; icon?: string };
 
     const updated = await updateCategory(id, { name, icon });
 
     if (!updated) {
-      return res.status(404).json({ message: "Category not found" });
+      res.status(404).json({ message: "Category not found" });
+      return;
     }
 
     res.json(updated);
@@ -48,12 +50,13 @@ export const updateCategoryHandler = asyncHandler(
 // Deletes a category by id.
 export const deleteCategoryHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    const { id } = req.params;
+    const id = (Array.isArray(req.params.id) ? req.params.id[0] : req.params.id) ?? "";
 
     const deleted = await deleteCategory(id);
 
     if (!deleted) {
-      return res.status(404).json({ message: "Category not found" });
+      res.status(404).json({ message: "Category not found" });
+      return;
     }
 
     res.status(204).send();
