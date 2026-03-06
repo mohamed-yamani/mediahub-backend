@@ -1,0 +1,8 @@
+# Render Blueprint for MediaHub Backend
+# https://docs.render.com/blueprint-spec
+services:
+  - type: web
+    runtime: node
+    name: mediahub-backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
